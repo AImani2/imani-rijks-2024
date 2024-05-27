@@ -7,7 +7,8 @@ public class Main {
 
     // ...
 //
-//    You will need to create a RijksService that has 3 methods. You can hard code the English version in the url’s culture field. You must pass the api key with each request.
+//    You will need to create a RijksService that has 3 methods.
+//    You can hard code the English version in the url’s culture field. You must pass the api key with each request.
 //
 //
 //

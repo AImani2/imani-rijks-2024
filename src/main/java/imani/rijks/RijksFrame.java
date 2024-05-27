@@ -1,5 +1,7 @@
 package imani.rijks;
 
+import com.andrewoid.ApiKey;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -7,7 +9,16 @@ import java.awt.event.MouseEvent;
 import java.util.concurrent.Flow;
 
 public class RijksFrame extends JFrame {
-    // need to create an object here which will be displayed?
+
+    JButton prevButton = new JButton("Previous Page");
+    JButton nextButton = new JButton("Next Page");
+    JTextField searchBar = new JTextField(42); // Set the preferred width
+
+    // create components for the pictures and add them to center
+
+    ApiKey apiKey = new ApiKey();
+    RijksService service = new RijksServiceFactory().getService();
+
 
     public RijksFrame() {
         setSize(800, 600);
@@ -15,24 +26,14 @@ public class RijksFrame extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         JPanel north = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        // is this the right layout?
+        JPanel center = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
-        // have to create a display area which will display the pictures.
-
-        // Create labels
-        JButton prevButton = new JButton("Previous Page");
-        JButton nextButton = new JButton("Next Page");
-
-        // Create a search bar (JTextField)
-        JTextField searchBar = new JTextField(30); // Set the preferred width
-
-        // Add components to the content pane
         north.add(prevButton);
         north.add(searchBar);
         north.add(nextButton);
 
-        // Add the panel to the frame
         add(north);
+        add(center);
 
         nextButton.addMouseListener(new MouseAdapter() {
             @Override
@@ -43,6 +44,7 @@ public class RijksFrame extends JFrame {
             }
         });
 
+
         prevButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -52,7 +54,10 @@ public class RijksFrame extends JFrame {
             }
         });
 
-        RijksService service = new RijksServiceFactory().getService();
+        searchBar.addActionListener(e -> {
+            update();
+        });
+
 
         // now i get if either there is no information in the search bar or there is
         // and display accordingly
@@ -61,7 +66,11 @@ public class RijksFrame extends JFrame {
     }
 
     public void update() {
+        // have to create this method
+        if(searchBar.getText() == null) {
+            // what am i calling each time?
 
+        }
     }
 
     public static void main(String[] args) {
@@ -69,7 +78,9 @@ public class RijksFrame extends JFrame {
         new RijksFrame().setVisible(true);
     }
 
-
-    // need my display buttons
-
 }
+
+// need a page count variable and i need to update that each time i hit prev/next page
+// need an image panel for 10 images - 5 by 2
+// then do a for loop and create a new artobject for every image
+// then load the image in a for loop for all of this

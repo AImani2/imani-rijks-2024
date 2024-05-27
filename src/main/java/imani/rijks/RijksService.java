@@ -1,10 +1,13 @@
 package imani.rijks;
 
 
+import io.reactivex.rxjava3.core.Single;
+import retrofit2.http.GET;
+import retrofit2.http.Query;
 
 public interface RijksService {
     @GET("/api/en/collection")
-        Single<ArtObjects> page(
+    Single<ArtObjects> page(
                 @Query("key") String key,
                 @Query("p") int page
     );
@@ -20,7 +23,7 @@ public interface RijksService {
     Single<ArtObjects> artist(
             @Query("key") String key,
             @Query("p") int page,
-            @Query("involvedMaker") string artist
+            @Query("involvedMaker") String artist
     );
 
     // acessing the info tourgh artobects - gettnig page query

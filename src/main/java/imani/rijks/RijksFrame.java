@@ -4,7 +4,9 @@ import com.andrewoid.ApiKey;
 import hu.akarnokd.rxjava3.swing.SwingSchedulers;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
+import retrofit2.http.Url;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -123,7 +125,16 @@ public class RijksFrame extends JFrame {
     }
 
     private void handleResponse(ArtObjects response) {
-
+        String[] listData = new String[response.artObjects.length];
+        for (int i = 0; i < response.artObjects.length; i++) {
+            ArtObject artObject = response.artObjects[i];
+            Url url = new Url(artObject.webImage.url); //lets figure this out over here...
+            Image image = ImageIO.read(artObject.webImage.url)
+            //listData[i] = feature.properties.mag + " " + feature.properties.place;
+            // my equivalent would be to list the image with the title here and maybe i dont want a list of strings to catch that -
+            // i probably want a different variable
+        }
+        //earthquakes.setListData(listData);
     }
 
     public static void main(String[] args) {

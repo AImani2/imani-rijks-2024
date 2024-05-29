@@ -11,6 +11,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -21,11 +23,12 @@ public class RijksFrame extends JFrame {
 
     JButton prevButton = new JButton("Previous Page");
     JButton nextButton = new JButton("Next Page");
+    JButton searchButton = new JButton("Search");
     JTextField searchBar = new JTextField(42); // Set the preferred width
     int pageNum = 1;
 
-    JPanel north = new JPanel(new FlowLayout(FlowLayout.CENTER));
-    JPanel center = new JPanel(new FlowLayout(FlowLayout.CENTER));
+    JPanel north = new JPanel(new BorderLayout());
+    JPanel center = new JPanel(new GridLayout(0, 5)); // why this?
     // create components for the pictures and add them to center
 
     ApiKey apiKey = new ApiKey();
@@ -37,16 +40,21 @@ public class RijksFrame extends JFrame {
         setTitle("Rijks Museum");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
-        north.add(prevButton);
-        north.add(searchBar);
-        north.add(nextButton);
+        north.add(prevButton, BorderLayout.WEST);
+        north.add(searchBar, BorderLayout.CENTER);
+        north.add(nextButton, BorderLayout.EAST);
+        north.add(searchButton, BorderLayout.PAGE_END);
 
-        add(north);
-        add(center);
+
+
+        add(north, BorderLayout.NORTH);
+        add(center, BorderLayout.CENTER);
+
 
         nextButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                pageNum++;
                 update();
             }
         });
@@ -55,54 +63,36 @@ public class RijksFrame extends JFrame {
         prevButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                pageNum--;
                 update();
             }
         });
 
-        searchBar.addActionListener(e -> {
-            update();
+        searchButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                update();
+            }
         });
 
-    }
+}
 
     public void update() {
-        // have to create this method
-        if(searchBar.getText() == null) {
-            if(prevButton.isEnabled()) {
-                fetchAndDisplayPreviousPage();
-            } else if (nextButton.isEnabled()){
-                fetchAndDisplayNextPage();
-            }
+        if(searchBar.getText().isEmpty()) {
+            fetchAndDisplayPage();
         } else {
-            // do i take the page number into account here too?
-            // should i reset page number to be 1?
-            pageNum = 1;
             fetchAndDisplaySearch();
         }
-
     }
 
-    public void fetchAndDisplayPreviousPage() {
-        pageNum--;
+    public void fetchAndDisplayPage() {
         Disposable disposable = service.page(apiKey.get(), pageNum) // updates automatically according to the website
                 // tells Rx to request the data on a background Thread
                 .subscribeOn(Schedulers.io())
                 // tells Rx to handle the response on Swing's main Thread
                 .observeOn(SwingSchedulers.edt())
                 //.observeOn(AndroidSchedulers.mainThread()) // Instead use this on Android only
-                .subscribe(response -> handleResponse(response),
-                        Throwable::printStackTrace);
-    }
-
-    public void fetchAndDisplayNextPage() {
-        pageNum++;
-        Disposable disposable = service.page(apiKey.get(), pageNum) // updates automatically according to the website
-                // tells Rx to request the data on a background Thread
-                .subscribeOn(Schedulers.io())
-                // tells Rx to handle the response on Swing's main Thread
-                .observeOn(SwingSchedulers.edt())
-                //.observeOn(AndroidSchedulers.mainThread()) // Instead use this on Android only
-                .subscribe(response -> handleResponse(response),
+                .subscribe(this::handleResponse,
                         Throwable::printStackTrace);
     }
 
@@ -114,27 +104,29 @@ public class RijksFrame extends JFrame {
                 // tells Rx to handle the response on Swing's main Thread
                 .observeOn(SwingSchedulers.edt())
                 //.observeOn(AndroidSchedulers.mainThread()) // Instead use this on Android only
-                .subscribe(response -> handleResponse(response),
+                .subscribe(this::handleResponse,
                         Throwable::printStackTrace);
     }
 
     private void handleResponse(ArtObjects response) throws IOException {
-        String[] listData = new String[response.artObjects.length];
+        ArtObject[] artObjects = response.artObjects;
 
-        for (int i = 0; i < response.artObjects.length; i++) {
+        center.setLayout(new GridLayout(2, 5));
+
+        for (int i = 0; i < artObjects.length; i++) {
+
             ArtObject artObject = response.artObjects[i];
-            URL url = URI.create(artObject.webImage.url).toURL();
-            listData[i] = url + "" + artObject.title;
-            Image image = ImageIO.read(url);
+            String url = artObject.webImage.url;
+            BufferedImage image = ImageIO.read(new File(url));
             Image scaledImage = image.getScaledInstance(200, -1, Image.SCALE_DEFAULT);
             JLabel label = new JLabel();
             ImageIcon imageIcon = new ImageIcon(scaledImage);
             label.setIcon(imageIcon);
             center.add(label);
         }
-        //ArtObjects.setListData(listData);
-        // maybe add a panel where i can add this to each time
     }
+
+
 
     public static void main(String[] args) {
 

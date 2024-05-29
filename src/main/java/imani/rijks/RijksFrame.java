@@ -11,6 +11,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
 import java.util.concurrent.Flow;
 
 public class RijksFrame extends JFrame {
@@ -124,17 +128,19 @@ public class RijksFrame extends JFrame {
                         Throwable::printStackTrace);
     }
 
-    private void handleResponse(ArtObjects response) {
+    private void handleResponse(ArtObjects response) throws IOException {
         String[] listData = new String[response.artObjects.length];
         for (int i = 0; i < response.artObjects.length; i++) {
             ArtObject artObject = response.artObjects[i];
-            Url url = new Url(artObject.webImage.url); //lets figure this out over here...
-            Image image = ImageIO.read(artObject.webImage.url)
-            //listData[i] = feature.properties.mag + " " + feature.properties.place;
-            // my equivalent would be to list the image with the title here and maybe i dont want a list of strings to catch that -
-            // i probably want a different variable
+            URL url = URI.create(artObject.webImage.url).toURL();
+            listData[i] = url + "" + artObject.title;
+            Image image = ImageIO.read(url);
+            Image scaledImage = image.getScaledInstance(200, -1, Image.SCALE_DEFAULT);
+            JLabel label = new JLabel();
+            ImageIcon imageIcon = new ImageIcon(scaledImage);
+            label.setIcon(imageIcon);
         }
-        //earthquakes.setListData(listData);
+        //ArtObjects.setListData(listData);
     }
 
     public static void main(String[] args) {

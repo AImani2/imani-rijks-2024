@@ -24,6 +24,8 @@ public class RijksFrame extends JFrame {
     JTextField searchBar = new JTextField(42); // Set the preferred width
     int pageNum = 1;
 
+    JPanel north = new JPanel(new FlowLayout(FlowLayout.CENTER));
+    JPanel center = new JPanel(new FlowLayout(FlowLayout.CENTER));
     // create components for the pictures and add them to center
 
     ApiKey apiKey = new ApiKey();
@@ -35,22 +37,17 @@ public class RijksFrame extends JFrame {
         setTitle("Rijks Museum");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
-        JPanel north = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        //JPanel center = new ImagePanel(new FlowLayout(FlowLayout.CENTER));
-
         north.add(prevButton);
         north.add(searchBar);
         north.add(nextButton);
 
         add(north);
-        //add(center);
+        add(center);
 
         nextButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 update();
-                // code here that i want to happen
-                // how do i go to the next page?
             }
         });
 
@@ -59,8 +56,6 @@ public class RijksFrame extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 update();
-                // code here that i want to happen
-                // how do i go to the next page
             }
         });
 
@@ -68,11 +63,6 @@ public class RijksFrame extends JFrame {
             update();
         });
 
-
-        // now i get if either there is no information in the search bar or there is
-        // and display accordingly
-        // i need to add actionlisteners to my search bar
-        // and i need to add click listeners to my previous and next
     }
 
     public void update() {
@@ -130,6 +120,7 @@ public class RijksFrame extends JFrame {
 
     private void handleResponse(ArtObjects response) throws IOException {
         String[] listData = new String[response.artObjects.length];
+
         for (int i = 0; i < response.artObjects.length; i++) {
             ArtObject artObject = response.artObjects[i];
             URL url = URI.create(artObject.webImage.url).toURL();
@@ -139,8 +130,10 @@ public class RijksFrame extends JFrame {
             JLabel label = new JLabel();
             ImageIcon imageIcon = new ImageIcon(scaledImage);
             label.setIcon(imageIcon);
+            center.add(label);
         }
         //ArtObjects.setListData(listData);
+        // maybe add a panel where i can add this to each time
     }
 
     public static void main(String[] args) {

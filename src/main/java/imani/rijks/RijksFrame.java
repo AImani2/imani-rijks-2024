@@ -45,11 +45,12 @@ public class RijksFrame extends JFrame {
         north.add(nextButton, BorderLayout.EAST);
         north.add(searchButton, BorderLayout.PAGE_END);
 
-
+        setLayout(new BorderLayout());
 
         add(north, BorderLayout.NORTH);
         add(center, BorderLayout.CENTER);
 
+        center.setLayout(new GridLayout(2, 5));
 
         nextButton.addMouseListener(new MouseAdapter() {
             @Override
@@ -111,19 +112,25 @@ public class RijksFrame extends JFrame {
     private void handleResponse(ArtObjects response) throws IOException {
         ArtObject[] artObjects = response.artObjects;
 
-        center.setLayout(new GridLayout(2, 5));
-
+        center.removeAll();
+        System.out.println("Loading Images");
         for (int i = 0; i < artObjects.length; i++) {
 
             ArtObject artObject = response.artObjects[i];
-            String url = artObject.webImage.url;
-            BufferedImage image = ImageIO.read(new File(url));
+            String strUrl = artObject.webImage.url;
+            URL url = new URL(strUrl);
+            Image image = ImageIO.read(url);
             Image scaledImage = image.getScaledInstance(200, -1, Image.SCALE_DEFAULT);
             JLabel label = new JLabel();
             ImageIcon imageIcon = new ImageIcon(scaledImage);
             label.setIcon(imageIcon);
             center.add(label);
         }
+
+        System.out.println("Finished Loading");
+
+        center.revalidate();
+        center.repaint();
     }
 
 

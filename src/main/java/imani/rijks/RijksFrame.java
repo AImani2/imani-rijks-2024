@@ -79,7 +79,7 @@ public class RijksFrame extends JFrame {
 }
 
     public void update() {
-        if(searchBar.getText().isEmpty()) {
+        if (searchBar.getText().isEmpty()) {
             fetchAndDisplayPage();
         } else {
             fetchAndDisplaySearch();
@@ -99,7 +99,7 @@ public class RijksFrame extends JFrame {
 
     public void fetchAndDisplaySearch() {
         // how do i know if the user just put in an artist? Do I call artist also?
-        Disposable disposable = service.query(apiKey.get(), pageNum, searchBar.getText()) // updates automatically according to the website
+        Disposable disposable = service.query(apiKey.get(), pageNum, searchBar.getText())
                 // tells Rx to request the data on a background Thread
                 .subscribeOn(Schedulers.io())
                 // tells Rx to handle the response on Swing's main Thread
@@ -141,8 +141,3 @@ public class RijksFrame extends JFrame {
     }
 
 }
-
-// need a page count variable and i need to update that each time i hit prev/next page
-// need an image panel for 10 images - 5 by 2
-// then do a for loop and create a new artobject for every image
-// then load the image in a for loop for all of this

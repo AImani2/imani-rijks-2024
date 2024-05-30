@@ -21,18 +21,17 @@ import java.util.concurrent.Flow;
 
 public class RijksFrame extends JFrame {
 
-    JButton prevButton = new JButton("Previous Page");
-    JButton nextButton = new JButton("Next Page");
-    JButton searchButton = new JButton("Search");
-    JTextField searchBar = new JTextField(42); // Set the preferred width
-    int pageNum = 1;
+    private JButton prevButton = new JButton("Previous Page");
+    private JButton nextButton = new JButton("Next Page");
+    private JButton searchButton = new JButton("Search");
+    private JTextField searchBar = new JTextField(42); // Set the preferred width
+    private int pageNum = 0;
 
-    JPanel north = new JPanel(new BorderLayout());
-    JPanel center = new JPanel(new GridLayout(0, 5)); // why this?
-    // create components for the pictures and add them to center
+    private JPanel north = new JPanel(new BorderLayout());
+    private JPanel center = new JPanel(new GridLayout(0, 5)); // why this?
 
-    ApiKey apiKey = new ApiKey();
-    RijksService service = new RijksServiceFactory().getService();
+    private ApiKey apiKey = new ApiKey();
+    private RijksService service = new RijksServiceFactory().getService();
 
 
     public RijksFrame() {
